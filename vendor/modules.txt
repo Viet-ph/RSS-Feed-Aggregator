@@ -1,0 +1,4 @@
+## workspace
+# github.com/joho/godotenv v1.5.1
+## explicit; go 1.12
+github.com/joho/godotenv
