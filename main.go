@@ -5,26 +5,32 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/handler"
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/middleware"
+	"github.com/Viet-ph/RSS-Feed-Aggregator/internal"
+	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/service"
+	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/utils"
 	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 func main() {
-	filePathRoot := "./static"
 	godotenv.Load()
+
 	port := os.Getenv("PORT")
-	mux := http.NewServeMux()
-	mux.Handle("/app/*", http.StripPrefix("/app/", http.FileServer(http.Dir(filePathRoot))))
-	mux.HandleFunc("GET /v1/readiness", handler.Readiness)
-
-	corsMux := middleware.MiddlewareCors(mux)
-
-	server := &http.Server{
-		Addr:    ":" + port,
-		Handler: corsMux,
+	if port == "" {
+		log.Fatal("Port is not found in the environment")
 	}
 
-	log.Printf("Serving files from %s on port: %s\n", filePathRoot, port)
+	queries, err := utils.ConnectDatabase()
+	if err != nil {
+		log.Fatal("Error conenction to database.")
+	}
+
+	srv := internal.NewServer(service.NewUserService(queries))
+	server := &http.Server{
+		Addr:    ":" + port,
+		Handler: srv,
+	}
+
+	log.Printf("Listening on port: %s\n", port)
 	log.Fatal(server.ListenAndServe())
 }
