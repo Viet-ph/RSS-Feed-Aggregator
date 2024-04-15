@@ -1,11 +1,10 @@
 package handler
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strings"
 
+	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/middleware"
 	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/service"
 	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/utils"
 )
@@ -30,22 +29,15 @@ func HandleCreateUser(userService *service.UserService) http.Handler {
 				return
 			}
 
-			utils.RespondWithJSON(w, http.StatusCreated, newUser)
+			utils.RespondWithJSON(w, http.StatusCreated, *newUser)
 		},
 	)
 }
 
-func HandleGetUserByAPIKey(userService *service.UserService) http.Handler {
+func HandleGetUserByAPIKey() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			authHeader := r.Header.Get("Authorization")
-			apiKey := strings.Split(authHeader, "ApiKey ")[1]
-			user, err := userService.GetUserByAPIKey(r.Context(), apiKey)
-			if err != nil {
-				errDetail := fmt.Sprintf("Error getting user by API key: %s", err)
-				utils.RespondWithError(w, http.StatusUnauthorized, errDetail)
-				return
-			}
+			user := r.Context().Value(middleware.ContextUserKey)
 			utils.RespondWithJSON(w, http.StatusOK, user)
 		},
 	)

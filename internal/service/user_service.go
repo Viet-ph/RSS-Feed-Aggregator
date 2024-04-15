@@ -19,7 +19,7 @@ func NewUserService(q *database.Queries) *UserService {
 	}
 }
 
-func (userService *UserService) CreateUser(ctx context.Context, username string) (model.User, error) {
+func (userService *UserService) CreateUser(ctx context.Context, username string) (*model.User, error) {
 	user, err := userService.Queries.CreateUser(ctx, database.CreateUserParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
@@ -28,28 +28,17 @@ func (userService *UserService) CreateUser(ctx context.Context, username string)
 	})
 
 	if err != nil {
-		return model.User{}, err
+		return &model.User{}, err
 	}
 
-	return model.User{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		Name:      user.Name,
-	}, nil
+	return model.DbUserToUser(&user), nil
 }
 
-func (userService *UserService) GetUserByAPIKey(ctx context.Context, apiKey string) (model.User, error) {
+func (userService *UserService) GetUserByAPIKey(ctx context.Context, apiKey string) (*model.User, error) {
 	user, err := userService.Queries.GetUserByAPIKey(ctx, apiKey)
 	if err != nil {
-		return model.User{}, err
+		return &model.User{}, err
 	}
 
-	return model.User{
-		ID:        user.ID,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-		Name:      user.Name,
-		APIKey:    user.ApiKey,
-	}, nil
+	return model.DbUserToUser(&user), nil
 }
