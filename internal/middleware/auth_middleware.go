@@ -16,7 +16,7 @@ const ContextUserKey ContextKey = "user"
 
 func NewMiddlewareAuth(userService *service.UserService) func(http.Handler) http.Handler {
 	//This will take the dependencies and return a authentication middleware that accepts only a single handler.
-	//By doing this, will clean up the middleware function arguments and create the closure to outer deps.
+	//By doing this, will clean up the middleware function arguments and create closure to outter deps.
 	return func(handler http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			apiKey, err := auth.GetAPIKey(r.Header)

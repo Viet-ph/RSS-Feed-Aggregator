@@ -28,7 +28,7 @@ func (userService *UserService) CreateUser(ctx context.Context, username string)
 	})
 
 	if err != nil {
-		return &model.User{}, err
+		return nil, err
 	}
 
 	return model.DbUserToUser(&user), nil

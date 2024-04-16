@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal"
+	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/server"
 	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/service"
 	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/utils"
 	"github.com/joho/godotenv"
@@ -25,7 +25,11 @@ func main() {
 		log.Fatal("Error conenction to database.")
 	}
 
-	srv := internal.NewServer(service.NewUserService(queries))
+	srv := server.NewServer(
+		service.NewUserService(queries),
+		service.NewFeedService(queries),
+		service.NewFeedFollowService(queries),
+	)
 	server := &http.Server{
 		Addr:    ":" + port,
 		Handler: srv,
