@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/database"
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/model"
+	database "github.com/Viet-ph/RSS-Feed-Aggregator/internal/database"
+	model "github.com/Viet-ph/RSS-Feed-Aggregator/internal/model"
 	"github.com/google/uuid"
 )
 
@@ -19,7 +19,7 @@ func NewFeedFollowService(q *database.Queries) *FeedFollowService {
 	}
 }
 
-func (feedFollowService *FeedFollowService) CreateFeedFollow(ctx context.Context, userId, feedId uuid.UUID) (*model.FeedFollow, error) {
+func (feedFollowService *FeedFollowService) CreateFeedFollow(ctx context.Context, userId, feedId uuid.UUID) (model.FeedFollow, error) {
 	feedFollow, err := feedFollowService.Queries.CreateFeedFollow(ctx, database.CreateFeedFollowParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
@@ -29,7 +29,7 @@ func (feedFollowService *FeedFollowService) CreateFeedFollow(ctx context.Context
 	})
 
 	if err != nil {
-		return nil, err
+		return model.FeedFollow{}, err
 	}
 
 	return model.DbFeedFollowToFeedFollow(&feedFollow), nil
@@ -42,7 +42,7 @@ func (feedService *FeedFollowService) GetFeedFollows(ctx context.Context, userId
 	}
 	feedFollows := make([]model.FeedFollow, 0, len(dbFeedFollows))
 	for _, dbFeedFollow := range dbFeedFollows {
-		feedFollows = append(feedFollows, *model.DbFeedFollowToFeedFollow(&dbFeedFollow))
+		feedFollows = append(feedFollows, model.DbFeedFollowToFeedFollow(&dbFeedFollow))
 	}
 
 	return feedFollows, nil

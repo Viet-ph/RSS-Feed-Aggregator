@@ -26,7 +26,7 @@ func HandleCreateFeed(feedService *service.FeedService, feedFollowService *servi
 				return
 			}
 
-			user := r.Context().Value(middleware.ContextUserKey).(*model.User) //Type assertion
+			user := r.Context().Value(middleware.ContextUserKey).(model.User) //Type assertion
 
 			newFeed, err := feedService.CreateFeed(r.Context(), req.Name, req.Url, user.ID)
 			if err != nil {
@@ -43,7 +43,7 @@ func HandleCreateFeed(feedService *service.FeedService, feedFollowService *servi
 			utils.RespondWithJSON(w, http.StatusCreated, struct {
 				Feed       model.Feed       `json:"feed"`
 				FeedFollow model.FeedFollow `json:"feed_follow"`
-			}{Feed: *newFeed, FeedFollow: *newFeedFollow})
+			}{Feed: newFeed, FeedFollow: newFeedFollow})
 		},
 	)
 }

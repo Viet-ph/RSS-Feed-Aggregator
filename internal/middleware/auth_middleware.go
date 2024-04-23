@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/auth"
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/service"
-	"github.com/Viet-ph/RSS-Feed-Aggregator/internal/utils"
+	auth "github.com/Viet-ph/RSS-Feed-Aggregator/internal/auth"
+	service "github.com/Viet-ph/RSS-Feed-Aggregator/internal/service"
+	utils "github.com/Viet-ph/RSS-Feed-Aggregator/internal/utils"
 )
 
 type ContextKey string

@@ -15,8 +15,8 @@ type FeedFollow struct {
 	FeedID    uuid.UUID `json:"feed_id"`
 }
 
-func DbFeedFollowToFeedFollow(dbFeedFollow *database.FeedFollow) *FeedFollow {
-	return &FeedFollow{
+func DbFeedFollowToFeedFollow(dbFeedFollow *database.FeedFollow) FeedFollow {
+	return FeedFollow{
 		ID:        dbFeedFollow.ID,
 		CreatedAt: dbFeedFollow.CreatedAt,
 		UpdatedAt: dbFeedFollow.UpdatedAt,

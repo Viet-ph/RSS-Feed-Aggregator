@@ -19,7 +19,7 @@ func NewFeedService(q *database.Queries) *FeedService {
 	}
 }
 
-func (feedService *FeedService) CreateFeed(ctx context.Context, name, url string, userId uuid.UUID) (*model.Feed, error) {
+func (feedService *FeedService) CreateFeed(ctx context.Context, name, url string, userId uuid.UUID) (model.Feed, error) {
 	feed, err := feedService.Queries.CreateFeed(ctx, database.CreateFeedParams{
 		ID:        uuid.New(),
 		CreatedAt: time.Now().UTC(),
@@ -30,7 +30,7 @@ func (feedService *FeedService) CreateFeed(ctx context.Context, name, url string
 	})
 
 	if err != nil {
-		return nil, err
+		return model.Feed{}, err
 	}
 
 	return model.DbFeedToFeed(&feed), nil
@@ -43,8 +43,30 @@ func (feedService *FeedService) GetFeeds(ctx context.Context) ([]model.Feed, err
 	}
 	feeds := make([]model.Feed, 0, len(dbFeeds))
 	for _, dbFeed := range dbFeeds {
-		feeds = append(feeds, *model.DbFeedToFeed(&dbFeed))
+		feeds = append(feeds, model.DbFeedToFeed(&dbFeed))
 	}
 
 	return feeds, nil
+}
+
+func (feedService *FeedService) GetNextFeedsToFetch(ctx context.Context, limit int32) ([]model.Feed, error) {
+	dbFeeds, err := feedService.Queries.GetNextFeedsToFetch(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+	feeds := make([]model.Feed, 0, len(dbFeeds))
+	for _, dbFeed := range dbFeeds {
+		feeds = append(feeds, model.DbFeedToFeed(&dbFeed))
+	}
+
+	return feeds, nil
+}
+
+func (feedService *FeedService) MarkFeedFetched(ctx context.Context, feedId uuid.UUID) (model.Feed, error) {
+	dbFeeds, err := feedService.Queries.MarkFeedFetched(ctx, feedId)
+	if err != nil {
+		return model.Feed{}, err
+	}
+
+	return model.DbFeedToFeed(&dbFeeds), nil
 }

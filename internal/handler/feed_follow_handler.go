@@ -26,7 +26,7 @@ func HandleCreateFeedFollow(feedFollowService *service.FeedFollowService) http.H
 				w.WriteHeader(500)
 				return
 			}
-			user := r.Context().Value(middleware.ContextUserKey).(*model.User) //Type assertion
+			user := r.Context().Value(middleware.ContextUserKey).(model.User) //Type assertion
 
 			newFeedFollow, err := feedFollowService.CreateFeedFollow(r.Context(), user.ID, req.FeedId)
 			if err != nil {
@@ -34,7 +34,7 @@ func HandleCreateFeedFollow(feedFollowService *service.FeedFollowService) http.H
 				return
 			}
 
-			utils.RespondWithJSON(w, http.StatusCreated, *newFeedFollow)
+			utils.RespondWithJSON(w, http.StatusCreated, newFeedFollow)
 		},
 	)
 }
@@ -42,7 +42,7 @@ func HandleCreateFeedFollow(feedFollowService *service.FeedFollowService) http.H
 func HandleGetFeedFollows(feedFollowService *service.FeedFollowService) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			user := r.Context().Value(middleware.ContextUserKey).(*model.User) //Type assertion
+			user := r.Context().Value(middleware.ContextUserKey).(model.User) //Type assertion
 			feedFollows, err := feedFollowService.GetFeedFollows(r.Context(), user.ID)
 			if err != nil {
 				utils.RespondWithError(w, http.StatusInternalServerError, "Error getting feed follows")
@@ -57,7 +57,7 @@ func HandleGetFeedFollows(feedFollowService *service.FeedFollowService) http.Han
 func HandleDeleteFeedFollow(feedFollowService *service.FeedFollowService) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			user := r.Context().Value(middleware.ContextUserKey).(*model.User) //Type assertion
+			user := r.Context().Value(middleware.ContextUserKey).(model.User) //Type assertion
 			feedId, err := uuid.Parse(r.PathValue("feedFollowID"))
 			if err != nil {
 				utils.RespondWithError(w, http.StatusInternalServerError, fmt.Sprintf("Couldn't parse feed follow id: %s", err))

@@ -12,13 +12,15 @@ func addRoutes(
 	mux *http.ServeMux,
 	userService *service.UserService,
 	feedService *service.FeedService,
+	postService *service.PostService,
 	feedFollowService *service.FeedFollowService,
 ) {
 	//Protected routes
 	middlewareAuth := middleware.NewMiddlewareAuth(userService)
 	mux.Handle("GET /v1/users", middlewareAuth(handler.HandleGetUserByAPIKey()))
-	mux.Handle("POST /v1/feeds", middlewareAuth(handler.HandleCreateFeed(feedService, feedFollowService)))
+	mux.Handle("GET /v1/posts", middlewareAuth(handler.HandleGetPostsByUser(postService)))
 	mux.Handle("GET /v1/feed_follows", middlewareAuth(handler.HandleGetFeedFollows(feedFollowService)))
+	mux.Handle("POST /v1/feeds", middlewareAuth(handler.HandleCreateFeed(feedService, feedFollowService)))
 	mux.Handle("POST /v1/feed_follows", middlewareAuth(handler.HandleCreateFeedFollow(feedFollowService)))
 	mux.Handle("DELETE /v1/feed_follows/{feedFollowID}", middlewareAuth(handler.HandleDeleteFeedFollow(feedFollowService)))
 

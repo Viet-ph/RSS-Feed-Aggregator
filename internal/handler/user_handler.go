@@ -29,7 +29,7 @@ func HandleCreateUser(userService *service.UserService) http.Handler {
 				return
 			}
 
-			utils.RespondWithJSON(w, http.StatusCreated, *newUser)
+			utils.RespondWithJSON(w, http.StatusCreated, newUser)
 		},
 	)
 }

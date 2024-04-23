@@ -28,6 +28,7 @@ func main() {
 	srv := server.NewServer(
 		service.NewUserService(queries),
 		service.NewFeedService(queries),
+		service.NewPostService(queries),
 		service.NewFeedFollowService(queries),
 	)
 	server := &http.Server{
