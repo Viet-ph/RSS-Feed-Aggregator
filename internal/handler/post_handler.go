@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 	"net/http"
 	"strconv"
 
@@ -17,14 +16,16 @@ func HandleGetPostsByUser(postService *service.PostService) http.Handler {
 			user := r.Context().Value(middleware.ContextUserKey).(model.User) //Type assertion
 
 			limitStr := r.URL.Query().Get("limit")
-			log.Println(limitStr)
-			limit, err := strconv.Atoi(limitStr)
-			if err != nil {
-				utils.RespondWithError(w, http.StatusInternalServerError, "Error getting limit query param")
-				return
-			}
-			if limit == 0 {
+			var limit int
+			if limitStr == "" {
 				limit = 5
+			} else {
+				var err error
+				limit, err = strconv.Atoi(limitStr)
+				if err != nil {
+					utils.RespondWithError(w, http.StatusInternalServerError, "Error convert limit query param to int")
+					return
+				}
 			}
 			posts, err := postService.GetPostsForUser(r.Context(), user.ID, int32(limit))
 			if err != nil {
